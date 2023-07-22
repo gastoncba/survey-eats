@@ -1,0 +1,12 @@
+import express, { Express } from "express";
+import { router as questionRouter } from "./question.router";
+import { router as optionRouter } from "./option.router";
+import { router as brandRouter } from "./brand.router";
+
+export const routerApi = (app: Express) => {
+    const router = express.Router()
+    app.use('/api', router)
+    router.use('/questions', questionRouter)
+    router.use('/options', optionRouter)
+    router.use('/brands', brandRouter)
+}
