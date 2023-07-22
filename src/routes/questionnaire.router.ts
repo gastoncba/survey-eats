@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 
-import { QuestionnaireService } from "../services/questionnnaire.service";
+import { QuestionnaireService } from "../services/questionnaire.service";
 import { validatorHandler } from "../middleware/validator.handler";
 import { createQuestionnaireSchema, getAllQuestionnaireSchema, getQuestionnaireSchema, updateQuestionnaireSchema } from "../schemas/questionnaire.schema";
 

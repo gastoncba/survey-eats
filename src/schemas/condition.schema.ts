@@ -33,10 +33,11 @@ export const updateConditionSchema = Joi.object({
     value,
     entityToCompare,
     operator,
+    brandId
 })
 
 export const getConditionSchema = Joi.object({
-    id: id.required()    
+    id: id.required(),
 })
 
 export const getAllConditionSchema = Joi.object({

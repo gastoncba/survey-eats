@@ -11,10 +11,8 @@ export class OptionService {
         return await option.save();
     }
 
-    async find(query: QueryString.ParsedQs) {
-        const { brandId } = query
-
-        const options = await OptionModel.find((brandId) ? {brandId} : {})
+    async find(brandId: string) {
+        const options = await OptionModel.find({ brandId }).select({brandId: 0})
         return options
     }
 

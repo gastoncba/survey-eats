@@ -36,10 +36,10 @@ const ConditionSchema = new Schema({
       Operator.IS_NOT_ONE_OF,
       Operator.IS_ONE_OF,
     ],
-    brandId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Brand'
-    },
+  },
+  brandId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Brand'
   },
   value: String,
 });

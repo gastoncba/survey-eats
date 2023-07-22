@@ -12,10 +12,9 @@ export class QuestionsService {
       return await question.save()
     }
 
-    async find(query: QueryString.ParsedQs) {
-      const { brandId } = query
+    async find(brandId: string) {
 
-      const questions = await QuestionModel.find((brandId) ? {brandId} : {})
+      const questions = await QuestionModel.find({ brandId }).select({brandId: 0})
       return questions
   }
 

@@ -20,6 +20,6 @@ export const createOptionSchema = Joi.object({
       id: id.required()
   })
 
-  export const queryOptionSchema = Joi.object({
-    brandId
+  export const getAllOptionSchema = Joi.object({
+    brandId: brandId.required()
 })

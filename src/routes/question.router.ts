@@ -4,8 +4,8 @@ import { QuestionsService } from "../services/question.service";
 import {
   createQuestionSchema,
   getQuestionSchema,
-  queryQuestionSchema,
   updateQuestionSchema,
+  getAllQuestionSchema
 } from "../schemas/question.schema";
 import { validatorHandler } from "../middleware/validator.handler";
 
@@ -14,10 +14,11 @@ const questionService = new QuestionsService();
 
 router.get(
   "/",
-  validatorHandler(queryQuestionSchema, "query"),
+  validatorHandler(getAllQuestionSchema, "body"),
   async (req: Request, res: Response, next: NextFunction) => {
+    const { brandId } = req.body
     try {
-      const questions = await questionService.find(req.query);
+      const questions = await questionService.find(brandId);
       res.json(questions);
     } catch (error) {
       next(error);

@@ -32,7 +32,7 @@ export const getQuestionSchema = Joi.object({
     id: id.required()
 })
 
-export const queryQuestionSchema = Joi.object({
-    brandId
+export const getAllQuestionSchema = Joi.object({
+    brandId: brandId.required()
 })
 

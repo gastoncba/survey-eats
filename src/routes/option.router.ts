@@ -2,17 +2,18 @@ import express, { Request, Response, NextFunction } from "express";
 
 import { OptionService } from "../services/option.service";
 import { validatorHandler } from "../middleware/validator.handler";
-import { createOptionSchema, getOptionSchema, queryOptionSchema, updateOptionSchema } from "../schemas/option.schema";
+import { createOptionSchema, getOptionSchema, updateOptionSchema, getAllOptionSchema} from "../schemas/option.schema";
 
 export const router = express.Router();
 const optionService = new OptionService();
 
 router.get(
-    "/brand/:brandId",
-    validatorHandler(queryOptionSchema, "query"),
+    "/",
+    validatorHandler(getAllOptionSchema, "body"),
     async (req: Request, res: Response, next: NextFunction) => {
+      const { brandId } = req.body
       try {
-        const options = await optionService.find(req.query);
+        const options = await optionService.find(brandId);
         res.json(options);
       } catch (error) {
         next(error);

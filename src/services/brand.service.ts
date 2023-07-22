@@ -9,12 +9,12 @@ export class BrandsService {
   async find(query: QueryString.ParsedQs) {
     const { name } = query;
 
-    const brands = await BrandModel.find(name ? { name } : {}).select({questionnaire: 0});
+    const brands = await BrandModel.find(name ? { name } : {}).select({questionnaires: 0});
     return brands;
   }
 
   async findOne(id: string) {
-    const brand = await BrandModel.findById(id).select({questionnaire: 0});;
+    const brand = await BrandModel.findById(id).select({questionnaires: 0});;
     if (!brand) {
       throw boom.notFound(`brand #${id} not found`);
     }
