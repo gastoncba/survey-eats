@@ -13,10 +13,10 @@ export const router = express.Router();
 const questionService = new QuestionsService();
 
 router.get(
-  "/",
-  validatorHandler(getAllQuestionSchema, "body"),
+  "/brand/:brandId",
+  validatorHandler(getAllQuestionSchema, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
-    const { brandId } = req.body
+    const { brandId } = req.params
     try {
       const questions = await questionService.find(brandId);
       res.json(questions);

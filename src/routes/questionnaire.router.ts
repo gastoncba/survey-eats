@@ -7,10 +7,10 @@ import { createQuestionnaireSchema, getAllQuestionnaireSchema, getQuestionnaireS
 export const router = express.Router();
 const questionnaireService = new QuestionnaireService();
 
-router.get("/", 
-  validatorHandler(getAllQuestionnaireSchema, "body"),
+router.get("/brand/:brandId", 
+  validatorHandler(getAllQuestionnaireSchema, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
-    const { brandId } = req.body;
+    const { brandId } = req.params;
     try {
     const questionnaires = await questionnaireService.find(brandId);
     res.json(questionnaires);

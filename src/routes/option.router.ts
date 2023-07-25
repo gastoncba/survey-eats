@@ -8,10 +8,10 @@ export const router = express.Router();
 const optionService = new OptionService();
 
 router.get(
-    "/",
-    validatorHandler(getAllOptionSchema, "body"),
+    "/brand/:brandId",
+    validatorHandler(getAllOptionSchema, "params"),
     async (req: Request, res: Response, next: NextFunction) => {
-      const { brandId } = req.body
+      const { brandId } = req.params
       try {
         const options = await optionService.find(brandId);
         res.json(options);

@@ -9,9 +9,9 @@ const conditionService = new ConditionService();
 
 router.get(
   "/",
-  validatorHandler(getAllConditionSchema, "body"),
+  validatorHandler(getAllConditionSchema, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
-    const { brandId } = req.body
+    const { brandId } = req.params
     try {
         const condition = await conditionService.find(brandId);
         res.json(condition);

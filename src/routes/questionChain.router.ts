@@ -7,10 +7,10 @@ import { createQuestionChainSchema, getAllQuestionChainSchema, getQuestionChainS
 export const router = express.Router();
 const questionChainService = new QuestionChainService();
 
-router.get("/", 
-  validatorHandler(getAllQuestionChainSchema, "body"),
+router.get("/questionnaire/questionnaireId", 
+  validatorHandler(getAllQuestionChainSchema, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
-    const { questionnaireId } = req.body;
+    const { questionnaireId } = req.params;
     try {
     const qChains = await questionChainService.find(questionnaireId);
     res.json(qChains);
