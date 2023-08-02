@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 
 import { QuestionnaireService } from "../services/questionnaire.service";
 import { validatorHandler } from "../middleware/validator.handler";
-import { createQuestionnaireSchema, getAllQuestionnaireSchema, getQuestionnaireSchema, updateQuestionnaireSchema } from "../schemas/questionnaire.schema";
+import { addQuestionChainsSchema, createQuestionnaireSchema, getAllQuestionnaireSchema, getQuestionnaireSchema, updateQuestionnaireSchema } from "../schemas/questionnaire.schema";
 
 export const router = express.Router();
 const questionnaireService = new QuestionnaireService();
@@ -70,6 +70,24 @@ router.put(
     }
   }
 );
+
+router.put("/:id/questionChains", 
+  validatorHandler(getQuestionnaireSchema, "params"),
+  validatorHandler(addQuestionChainsSchema, "body"),
+  async(req: Request, res: Response, next: NextFunction) => {
+    const { body } = req;
+    const { id } = req.params;
+    const { questionChains } = body;
+
+    try {
+      await questionnaireService.addQuestionChains(questionChains, id);
+      res.json({
+        message: 'update questionChains', 
+      })
+    } catch (error) {
+      next(error)
+    }
+})
 
 router.delete(
   "/:id",

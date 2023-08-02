@@ -1,5 +1,4 @@
 import * as boom from "@hapi/boom";
-import QueryString from "qs";
 
 import QuestionModel from "../models/question.model";
 

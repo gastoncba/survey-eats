@@ -5,6 +5,7 @@ const idRegex = /^[0-9a-fA-F]{24}$/;
 const id = Joi.string().regex(idRegex)
 const brandId = Joi.string().regex(idRegex)
 const name = Joi.string().min(1).max(50)
+const questionChains = Joi.array()
 
 export const createQuestionnaireSchema = Joi.object({
     name: name.required(),
@@ -21,4 +22,8 @@ export const getQuestionnaireSchema = Joi.object({
 
 export const getAllQuestionnaireSchema = Joi.object({
     brandId: brandId.required()
+})
+
+export const addQuestionChainsSchema = Joi.object({
+    questionChains: questionChains.required()
 })

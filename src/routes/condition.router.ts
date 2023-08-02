@@ -8,7 +8,7 @@ export const router = express.Router();
 const conditionService = new ConditionService();
 
 router.get(
-  "/",
+  "/brand/:brandId",
   validatorHandler(getAllConditionSchema, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { brandId } = req.params
