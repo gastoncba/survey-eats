@@ -5,17 +5,6 @@ import BrandModel from "../models/brand.model";
 import { Schema } from "mongoose";
 import QuestionChainModel from "../models/questionChain.model";
 
-type QuestionChainEntity = {
-  question: {
-    type: Schema.Types.ObjectId;
-    ref: "Question";
-  };
-  positiveOptions: Array<Schema.Types.ObjectId>;
-  negativeOptions: Array<Schema.Types.ObjectId> | null;
-  acceptStars: boolean;
-  conditions: Array<Schema.Types.ObjectId> | null;
-};
-
 export class QuestionnaireService {
   constructor() {}
 

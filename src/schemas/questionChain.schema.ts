@@ -5,7 +5,7 @@ const id = Joi.string().regex(idRegex)
 const question = Joi.string().regex(idRegex);
 const positiveOptions = Joi.array().items(Joi.string().regex(idRegex))
 const negativeOptions = Joi.array().items(Joi.string().regex(idRegex)).allow(null)
-const condition = Joi.array().items(Joi.string().regex(idRegex)).allow(null)
+const conditions = Joi.array().items(Joi.string().regex(idRegex)).allow(null)
 const acceptStars = Joi.boolean()
 const questionnaireId = Joi.string().regex(idRegex);
 
@@ -14,7 +14,7 @@ export const createQuestionChainSchema = Joi.object({
    positiveOptions: positiveOptions.required(),
    negativeOptions: negativeOptions.required(),
    acceptStars: acceptStars.required(),
-   condition: condition.required(),
+   conditions: conditions.required(),
    questionnaireId: questionnaireId.required()
 });
 
@@ -23,7 +23,7 @@ export const updateQuestionChainSchema = Joi.object({
     positiveOptions,
     negativeOptions,
     acceptStars,
-    condition,
+    conditions,
  });
 
  export const getQuestionChainSchema = Joi.object({

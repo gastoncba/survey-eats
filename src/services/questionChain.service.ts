@@ -22,13 +22,19 @@ export class QuestionChainService {
   }
 
   async find(questionnaireId: string) {
-    const questionnaire = await QuestionnaireModel.findById(questionnaireId)
-    if(questionnaire) {
-      const qChains = await QuestionChainModel.find({ _id: { $in: questionnaire.questionChains } });
-      return qChains;
-    } else {
+    const questionnaire = await QuestionnaireModel.findById(questionnaireId);
+
+    if (!questionnaire) {
       throw boom.notFound(`questionnaire #${questionnaireId} not found`);
-    };
+    }
+
+    return await QuestionChainModel.find({
+      _id: { $in: questionnaire.questionChains },
+    })
+      .populate("question")
+      .populate("positiveOptions")
+      .populate("negativeOptions")
+      .populate("conditions");
   }
 
   async findOne(id: string) {
@@ -52,18 +58,19 @@ export class QuestionChainService {
   }
 
   async remove(id: string) {
+    const foundQuestionnaire = await QuestionnaireModel.findOne({
+      questionChains: { $in: [id] },
+    });
 
-    const foundQuestionnaire = await QuestionnaireModel.findOne({questionChains: {$in: [id] }})
-
-    if(!foundQuestionnaire) {
-      throw boom.notFound(`questionnaire not found`)
+    if (!foundQuestionnaire) {
+      throw boom.notFound(`questionnaire not found`);
     }
 
     await QuestionnaireModel.updateOne(
-      { _id: foundQuestionnaire._id }, 
+      { _id: foundQuestionnaire._id },
       { $pull: { questionChains: id } }
     );
-    
+
     const foundQChain = await QuestionChainModel.findByIdAndRemove(id);
     if (!foundQChain) {
       throw boom.notFound(`question chain #${id} not found`);
