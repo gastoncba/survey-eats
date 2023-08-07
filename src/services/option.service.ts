@@ -1,6 +1,7 @@
 import * as boom from "@hapi/boom";
 
 import { OptionModel } from "../models/option.model";
+import QuestionChainModel from "../models/questionChain.model";
 
 export class OptionService {
     constructor() {} 
@@ -32,10 +33,21 @@ export class OptionService {
     }
 
     async remove(id: string) {
-        const foundOption = await OptionModel.findById(id)
-        if(!foundOption) {
-          throw boom.notFound(`option #${id} not found`);
+        const foundQChain = await QuestionChainModel.find({
+            $or: [
+                { positiveOptions: { $in: [id] } },
+                { negativeOptions: { $in: [id] } }
+            ]
+        });
+    
+        if (foundQChain.length > 0) {
+            throw boom.badRequest('La opcion esta siendo usada en otro cuestionario');
         }
-        return await OptionModel.deleteOne({_id: id})
-    }
+    
+        const foundOption = await OptionModel.findByIdAndRemove(id);
+    
+        if (!foundOption) {
+            throw boom.notFound(`option #${id} not found`);
+        }
+    }    
 }

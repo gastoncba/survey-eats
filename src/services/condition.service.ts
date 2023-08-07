@@ -35,10 +35,9 @@ export class ConditionService {
   }
 
   async remove(id: string) {
-    const foundCondition = await ConditionModel.findById(id);
+    const foundCondition = await ConditionModel.findByIdAndDelete(id);
     if (!foundCondition) {
       throw boom.notFound(`condition #${id} not found`);
     }
-    return await ConditionModel.deleteOne({ _id: id });
   }
 }

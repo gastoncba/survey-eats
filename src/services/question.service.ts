@@ -1,6 +1,7 @@
 import * as boom from "@hapi/boom";
 
 import QuestionModel from "../models/question.model";
+import QuestionChainModel from "../models/questionChain.model";
 
 export class QuestionsService {
 
@@ -34,10 +35,15 @@ export class QuestionsService {
   }
 
   async remove(id: string) {
-    const foundQuestion = await QuestionModel.findById(id)
+    
+    const foundQChain = await QuestionChainModel.find({question: id})
+    if(foundQChain.length > 0) {
+      throw boom.badRequest('Esta pregunta esta siendo usada en otro cuestionario')
+    }
+
+    const foundQuestion = await QuestionModel.findByIdAndDelete(id)
     if(!foundQuestion) {
       throw boom.notFound(`question #${id} not found`);
     }
-    return await QuestionModel.deleteOne({_id: id})
   }
 }

@@ -52,10 +52,21 @@ export class QuestionChainService {
   }
 
   async remove(id: string) {
-    const foundQChain = await QuestionChainModel.findById(id);
+
+    const foundQuestionnaire = await QuestionnaireModel.findOne({questionChains: {$in: [id] }})
+
+    if(!foundQuestionnaire) {
+      throw boom.notFound(`questionnaire not found`)
+    }
+
+    await QuestionnaireModel.updateOne(
+      { _id: foundQuestionnaire._id }, 
+      { $pull: { questionChains: id } }
+    );
+    
+    const foundQChain = await QuestionChainModel.findByIdAndRemove(id);
     if (!foundQChain) {
       throw boom.notFound(`question chain #${id} not found`);
     }
-    return await foundQChain.deleteOne({ _id: id });
   }
 }

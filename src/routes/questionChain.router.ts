@@ -76,7 +76,6 @@ router.delete(
   validatorHandler(getQuestionChainSchema, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-
     try {
       await questionChainService.remove(id);
       res.json({

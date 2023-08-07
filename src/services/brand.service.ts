@@ -37,10 +37,9 @@ export class BrandsService {
   }
 
   async remove(id: string) {
-    const foundBrand = await BrandModel.findById(id);
+    const foundBrand = await BrandModel.findByIdAndDelete(id);
     if (!foundBrand) {
       throw boom.notFound(`brand #${id} not found`);
     }
-    return await BrandModel.deleteOne({ _id: id });
   }
 }

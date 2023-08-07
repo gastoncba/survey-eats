@@ -71,24 +71,6 @@ router.put(
   }
 );
 
-router.put("/:id/questionChains", 
-  validatorHandler(getQuestionnaireSchema, "params"),
-  validatorHandler(addQuestionChainsSchema, "body"),
-  async(req: Request, res: Response, next: NextFunction) => {
-    const { body } = req;
-    const { id } = req.params;
-    const { questionChains } = body;
-
-    try {
-      await questionnaireService.addQuestionChains(questionChains, id);
-      res.json({
-        message: 'update questionChains', 
-      })
-    } catch (error) {
-      next(error)
-    }
-})
-
 router.delete(
   "/:id",
   validatorHandler(getQuestionnaireSchema, "params"),
