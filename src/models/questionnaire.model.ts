@@ -7,6 +7,12 @@ const QuestionnaireSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'QuestionChain'
         }
+    ],
+    gifts: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Gift'
+        }
     ]
 })
 

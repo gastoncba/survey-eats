@@ -7,18 +7,17 @@ export class QuestionChainService {
   constructor() {}
 
   async create(data: any, questionnaireId: string) {
-    const qChain = new QuestionChainModel(data);
-    await qChain.save();
 
     const questionnaire = await QuestionnaireModel.findById(questionnaireId);
     if (questionnaire) {
+      const qChain = new QuestionChainModel(data);
+      await qChain.save();
       questionnaire.questionChains.push(qChain._id);
       await questionnaire.save();
+      return qChain
     } else {
       throw boom.notFound(`questionnaire #${questionnaireId} not found`);
     }
-
-    return qChain;
   }
 
   async find(questionnaireId: string) {
@@ -71,8 +70,8 @@ export class QuestionChainService {
       { $pull: { questionChains: id } }
     );
 
-    const foundQChain = await QuestionChainModel.findByIdAndRemove(id);
-    if (!foundQChain) {
+    const deletedQChain = await QuestionChainModel.findByIdAndRemove(id);
+    if (!deletedQChain) {
       throw boom.notFound(`question chain #${id} not found`);
     }
   }

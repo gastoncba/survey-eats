@@ -25,12 +25,10 @@ export class QuestionnaireService {
 
   async find(brandId: string) {
     const brand = await BrandModel.findById(brandId)
-      .select("questionnaires")
-      .exec();
     if (brand) {
       const questionnaires = await QuestionnaireModel.find({
         _id: { $in: brand.questionnaires },
-      }).select({ questionChains: 0 });
+      }).select({ questionChains: 0, gifts: 0});
       return questionnaires;
     } else {
       throw boom.notFound(`brand #${brandId} not found`);
@@ -46,7 +44,7 @@ export class QuestionnaireService {
         { path: "negativeOptions" },
         { path: "conditions" },
       ],
-    });
+    }).populate({path: 'gifts', select: '-startDate -endDate',});
     if (!questionnaire) {
       throw boom.notFound(`questionnaire #${id} not found`);
     }
@@ -66,14 +64,27 @@ export class QuestionnaireService {
   }
 
   async remove(id: string) {
+
+    const brand = await BrandModel.findOne({ questionnaires: {$in: [id]}})
+    if(!brand) {
+      throw boom.notFound(`brand #${id} not found`);
+    }
+
+    await BrandModel.updateOne(
+      {_id: brand._id}, 
+      { $pull: { questionnaires: id } }
+    )
+    
     const foundQuestionnaire = await QuestionnaireModel.findByIdAndRemove(id);
     if (!foundQuestionnaire) {
       throw boom.notFound(`questionnaire #${id} not found`);
     }
+
     const questionChainIds = foundQuestionnaire.questionChains.map(
       (questionChain) => questionChain._id
     );
 
     await QuestionChainModel.deleteMany({ _id: { $in: questionChainIds } });
+    
   }
 }
