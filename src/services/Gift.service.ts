@@ -12,7 +12,7 @@ export class GiftService {
       throw boom.notFound(`questionnaire #${questionnaireId} not found`);
     }
 
-    return await GiftModel.find({ _id: { $in: questionnaire.gifts } }).select({startDate: 0, endDate: 0});
+    return await GiftModel.find({ _id: { $in: questionnaire.gifts } });
   }
 
   async create(data: any, questionnaireId: string) {

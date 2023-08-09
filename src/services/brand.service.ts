@@ -2,6 +2,7 @@ import * as boom from "@hapi/boom";
 import QueryString from "qs";
 
 import BrandModel from "../models/brand.model";
+import QuestionnaireModel from "../models/questionnaire.model";
 
 export class BrandsService {
   constructor() {}
@@ -37,9 +38,13 @@ export class BrandsService {
   }
 
   async remove(id: string) {
+
     const foundBrand = await BrandModel.findByIdAndDelete(id);
     if (!foundBrand) {
       throw boom.notFound(`brand #${id} not found`);
     }
+
+    const questionnaireIds = foundBrand.questionnaires.map(questionnaire => questionnaire._id)
+    await QuestionnaireModel.deleteMany({_id: {$in: questionnaireIds}})
   }
 }

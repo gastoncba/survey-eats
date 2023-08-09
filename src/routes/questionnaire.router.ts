@@ -19,6 +19,19 @@ router.get("/brand/:brandId",
   }
 });
 
+router.get("/answer/:brandId", 
+  validatorHandler(getAllQuestionnaireSchema, "params"), 
+  async(req: Request, res: Response, next: NextFunction) => {
+    const { brandId } = req.params;
+    try {
+      const questionnaire = await questionnaireService.getAnyQuestionnaire(brandId)
+      res.json(questionnaire)
+    } catch (error) {
+      next(error)
+    }
+    
+})
+
 router.get(
   "/:id",
   validatorHandler(getQuestionnaireSchema, "params"),

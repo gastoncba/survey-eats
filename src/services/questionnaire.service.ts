@@ -2,7 +2,6 @@ import * as boom from "@hapi/boom";
 
 import QuestionnaireModel from "../models/questionnaire.model";
 import BrandModel from "../models/brand.model";
-import { Schema } from "mongoose";
 import QuestionChainModel from "../models/questionChain.model";
 
 export class QuestionnaireService {
@@ -44,7 +43,7 @@ export class QuestionnaireService {
         { path: "negativeOptions" },
         { path: "conditions" },
       ],
-    }).populate({path: 'gifts', select: '-startDate -endDate',});
+    }).populate('gifts');
     if (!questionnaire) {
       throw boom.notFound(`questionnaire #${id} not found`);
     }
@@ -86,5 +85,21 @@ export class QuestionnaireService {
 
     await QuestionChainModel.deleteMany({ _id: { $in: questionChainIds } });
     
+  }
+
+  async getAnyQuestionnaire(brandId: string) {
+    const brand = await BrandModel.findById(brandId)
+    if(!brand) {
+      throw boom.notFound(`brand #${brandId} not found`)
+    }
+
+    if(brand.questionnaires.length === 0) {
+      throw boom.badRequest(`Empty questionnaire`)
+    }
+
+    const random = Math.floor(Math.random() * brand.questionnaires.length)
+    const seletedQuestionnaireId = brand.questionnaires[random]
+    
+    return await this.findOne(seletedQuestionnaireId.toString())
   }
 }
