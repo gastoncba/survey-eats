@@ -1,13 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
 
-import { GiftService } from "../services/Gift.service";
+import { GiftService } from "../services/gift.service";
 import { validatorHandler } from "../middleware/validator.handler";
 import {
   createGiftSchema,
   getAllGiftSchema,
   getGiftSchema,
   updateGiftSchema,
-} from "../schemas/Gift.schema";
+} from "../schemas/gift.schema";
 
 export const router = express.Router();
 const giftService = new GiftService();

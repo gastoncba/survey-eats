@@ -1,6 +1,6 @@
 import * as boom from "@hapi/boom";
 
-import GiftModel from "../models/Gift.model";
+import GiftModel from "../models/gift.model";
 import QuestionnaireModel from "../models/questionnaire.model";
 
 export class GiftService {
