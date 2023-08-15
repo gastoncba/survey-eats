@@ -27,3 +27,8 @@ export const getAllQuestionnaireSchema = Joi.object({
 export const addQuestionChainsSchema = Joi.object({
     questionChains: questionChains.required()
 })
+
+export const createStatisticsSchema = Joi.object({
+    brandId: brandId.required(),
+    questionnaireId: id.required()
+})

@@ -2,35 +2,60 @@ import express, { NextFunction, Request, Response } from "express";
 
 import { QuestionnaireService } from "../services/questionnaire.service";
 import { validatorHandler } from "../middleware/validator.handler";
-import { addQuestionChainsSchema, createQuestionnaireSchema, getAllQuestionnaireSchema, getQuestionnaireSchema, updateQuestionnaireSchema } from "../schemas/questionnaire.schema";
+import {
+  createQuestionnaireSchema,
+  getAllQuestionnaireSchema,
+  getQuestionnaireSchema,
+  updateQuestionnaireSchema,
+  createStatisticsSchema,
+} from "../schemas/questionnaire.schema";
 
 export const router = express.Router();
 const questionnaireService = new QuestionnaireService();
 
-router.get("/brand/:brandId", 
+router.get(
+  "/brand/:brandId",
   validatorHandler(getAllQuestionnaireSchema, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { brandId } = req.params;
     try {
-    const questionnaires = await questionnaireService.find(brandId);
-    res.json(questionnaires);
-  } catch (error) {
-    next(error);
+      const questionnaires = await questionnaireService.find(brandId);
+      res.json(questionnaires);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
-router.get("/answer/:brandId", 
-  validatorHandler(getAllQuestionnaireSchema, "params"), 
-  async(req: Request, res: Response, next: NextFunction) => {
+router.get(
+  "/answer/:brandId",
+  validatorHandler(getAllQuestionnaireSchema, "params"),
+  async (req: Request, res: Response, next: NextFunction) => {
     const { brandId } = req.params;
     try {
-      const questionnaire = await questionnaireService.getAnyQuestionnaire(brandId)
-      res.json(questionnaire)
+      const questionnaire = await questionnaireService.getAnyQuestionnaire(
+        brandId
+      );
+      res.json(questionnaire);
     } catch (error) {
-      next(error)
+      next(error);
     }
-    
-})
+  }
+);
+
+router.post(
+  "/send",
+  validatorHandler(createStatisticsSchema, "body"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { brandId, questionnaireId } = req.body;
+    try {
+      await questionnaireService.sendQuestionnaireAnswered({ brandId, questionnaireId });
+      res.json({ message: "save" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 router.get(
   "/:id",

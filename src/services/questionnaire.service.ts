@@ -3,6 +3,8 @@ import * as boom from "@hapi/boom";
 import QuestionnaireModel from "../models/questionnaire.model";
 import BrandModel from "../models/brand.model";
 import QuestionChainModel from "../models/questionChain.model";
+import StatisticModel from "../models/statistics.model";
+import mongoose from "mongoose";
 
 export class QuestionnaireService {
   constructor() {}
@@ -101,5 +103,18 @@ export class QuestionnaireService {
     const seletedQuestionnaireId = brand.questionnaires[random]
     
     return await this.findOne(seletedQuestionnaireId.toString())
+  }
+
+  async sendQuestionnaireAnswered(data: {questionnaireId: string, brandId: string}) {
+    const { brandId, questionnaireId  } = data
+    const statistics = await StatisticModel.findOne({ brandId })
+    if(!statistics) {
+      const newStatistic = new StatisticModel(data)
+      newStatistic.answeredQuestionnaires++;
+      await newStatistic.save()
+    } else {
+      statistics.answeredQuestionnaires++;
+      statistics.save()
+    }
   }
 }
