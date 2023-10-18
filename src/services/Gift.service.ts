@@ -1,6 +1,6 @@
 import * as boom from "@hapi/boom";
 
-import GiftModel from "../models/gift.model";
+//import GiftModel from "../models/gift.model";
 import QuestionnaireModel from "../models/questionnaire.model";
 
 export class GiftService {
@@ -12,7 +12,7 @@ export class GiftService {
       throw boom.notFound(`questionnaire #${questionnaireId} not found`);
     }
 
-    return await GiftModel.find({ _id: { $in: questionnaire.gifts } });
+    //return await GiftModel.find({ _id: { $in: questionnaire.gifts } });
   }
 
   async create(data: any, questionnaireId: string) {
@@ -22,22 +22,22 @@ export class GiftService {
       throw boom.notFound(`questionnaire #${questionnaireId} not found`);
     }
 
-    const gift = new GiftModel(data);
-    await gift.save();
+    // const gift = new GiftModel(data);
+    // await gift.save();
 
-    questionnaire.gifts.push(gift._id);
-    await questionnaire.save();
-    return gift;
+    // questionnaire.gifts.push(gift._id);
+    // await questionnaire.save();
+    // return gift;
   }
 
   async update(change: any, id: string) {
-    const updateGift = await GiftModel.findByIdAndUpdate(id, change, {
-      new: true,
-    });
-    if (!updateGift) {
-      throw boom.notFound(`gift #${id} not found`);
-    }
-    return updateGift;
+    // const updateGift = await GiftModel.findByIdAndUpdate(id, change, {
+    //   new: true,
+    // });
+    // if (!updateGift) {
+    //   throw boom.notFound(`gift #${id} not found`);
+    // }
+    // return updateGift;
   }
 
   async remove(id: string) {
@@ -54,9 +54,9 @@ export class GiftService {
         { $pull: { gifts: id } }
       );
   
-      const deletedGift = await GiftModel.findByIdAndRemove(id);
-      if (!deletedGift) {
-        throw boom.notFound(`gift chain #${id} not found`);
-      }
+      //const deletedGift = await GiftModel.findByIdAndRemove(id);
+      // if (!deletedGift) {
+      //   throw boom.notFound(`gift chain #${id} not found`);
+      // }
   }
 }
