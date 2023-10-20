@@ -32,3 +32,7 @@ export const createStatisticsSchema = Joi.object({
     brandId: brandId.required(),
     questionnaireId: id.required()
 })
+
+export const queryQuestionnaireIdSchema = Joi.object({
+    id
+})

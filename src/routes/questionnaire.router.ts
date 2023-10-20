@@ -8,6 +8,7 @@ import {
   getQuestionnaireSchema,
   updateQuestionnaireSchema,
   createStatisticsSchema,
+  queryQuestionnaireIdSchema,
 } from "../schemas/questionnaire.schema";
 
 export const router = express.Router();
@@ -30,11 +31,15 @@ router.get(
 router.get(
   "/answer/:brandId",
   validatorHandler(getAllQuestionnaireSchema, "params"),
+  validatorHandler(queryQuestionnaireIdSchema, "query"),
   async (req: Request, res: Response, next: NextFunction) => {
     const { brandId } = req.params;
+    const { id } = req.query;
+    const questionnaireId = id ? id as string : undefined
     try {
       const questionnaire = await questionnaireService.getAnyQuestionnaire(
-        brandId
+        brandId,
+        questionnaireId
       );
       res.json(questionnaire);
     } catch (error) {

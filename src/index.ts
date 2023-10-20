@@ -31,4 +31,4 @@ app.use(logError);
 app.use(boomErrorHandler);
 app.use(errorHandler);
 
-app.listen(3001, () => {});
+app.listen(8080, () => {});

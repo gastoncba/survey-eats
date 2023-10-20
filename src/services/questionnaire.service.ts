@@ -4,7 +4,6 @@ import QuestionnaireModel from "../models/questionnaire.model";
 import BrandModel from "../models/brand.model";
 import QuestionChainModel from "../models/questionChain.model";
 import StatisticModel from "../models/statistics.model";
-import mongoose from "mongoose";
 
 export class QuestionnaireService {
   constructor() {}
@@ -89,7 +88,12 @@ export class QuestionnaireService {
     
   }
 
-  async getAnyQuestionnaire(brandId: string) {
+  async getAnyQuestionnaire(brandId: string, questionnaireId?: string) {
+    
+    if(questionnaireId) {
+      return await this.findOne(questionnaireId)
+    }
+    
     const brand = await BrandModel.findById(brandId)
     if(!brand) {
       throw boom.notFound(`brand #${brandId} not found`)
