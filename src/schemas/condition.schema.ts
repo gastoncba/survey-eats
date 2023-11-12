@@ -9,17 +9,11 @@ const brandId = Joi.string().regex(idRegex);
 const value = Joi.string().min(3).max(50);
 const entityToCompare = Joi.string().valid(
   EntityToCompare.AGE,
-  EntityToCompare.ANSWERED,
-  EntityToCompare.DAY,
-  EntityToCompare.FRANCHISE
+  EntityToCompare.ANSWERED
 );
 const operator = Joi.string().valid(
     Operator.BETWEEN,
     Operator.IS,
-    Operator.IS_LESS_THAN,
-    Operator.IS_MORE_THAN,
-    Operator.IS_NOT_ONE_OF,
-    Operator.IS_ONE_OF
 )
 
 export const createConditionSchema = Joi.object({

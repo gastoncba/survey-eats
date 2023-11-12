@@ -52,9 +52,9 @@ router.post(
   "/send",
   validatorHandler(createStatisticsSchema, "body"),
   async (req: Request, res: Response, next: NextFunction) => {
-    const { brandId, questionnaireId } = req.body;
+    const { brandId, questionnaireId, answeredQuestionnaire } = req.body;
     try {
-      await questionnaireService.sendQuestionnaireAnswered({ brandId, questionnaireId });
+      await questionnaireService.sendQuestionnaireAnswered({ brandId, questionnaireId, answeredQuestionnaire });
       res.json({ message: "save" });
     } catch (error) {
       next(error);

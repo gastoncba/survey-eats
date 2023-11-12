@@ -6,6 +6,7 @@ const id = Joi.string().regex(idRegex)
 const brandId = Joi.string().regex(idRegex)
 const name = Joi.string().min(1).max(50)
 const questionChains = Joi.array()
+const answeredQuestionnaire = Joi.object()
 
 export const createQuestionnaireSchema = Joi.object({
     name: name.required(),
@@ -30,7 +31,8 @@ export const addQuestionChainsSchema = Joi.object({
 
 export const createStatisticsSchema = Joi.object({
     brandId: brandId.required(),
-    questionnaireId: id.required()
+    questionnaireId: id.required(),
+    answeredQuestionnaire: answeredQuestionnaire.required() 
 })
 
 export const queryQuestionnaireIdSchema = Joi.object({
