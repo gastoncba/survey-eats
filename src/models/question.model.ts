@@ -1,10 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-export enum QuestionType {
-  OPEN = "OPEN",
-  CLOSED = "CLOSED",
-}
-
 const QuestionSchema = new Schema({
   positiveQuestion: String,
   negativeQuestion: {
@@ -13,11 +8,6 @@ const QuestionSchema = new Schema({
   },
   multipleSelection: Boolean,
   starToDisplayPositive: Number,
-  type: {
-    type: String,
-    enum: [QuestionType.OPEN, QuestionType.CLOSED],
-    default: QuestionType.OPEN,
-  },
   brandId: {
     type: Schema.Types.ObjectId,
     ref: 'Brand'
