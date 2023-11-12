@@ -113,6 +113,26 @@ export class QuestionnaireService {
       questionnaireId,
     });
 
+    const questionaChainsId = answered.map((ans) => ans.questionChainId);
+
+    let answeredOptions: AnsweredOption[] = [];
+    const ansOptionsModel = await QuestionChainModel.find({ _id: { $in: questionaChainsId }, conditions: { $ne: null } });
+
+    for (const ansOpt of ansOptionsModel) {
+      for (const a of answered) {
+        if (ansOpt._id.toString() === a.questionChainId) {
+          const condition = await ConditionModel.findById(ansOpt.conditions[0]._id);
+          if (condition) {
+            let ansOptions: AnsweredOption = {
+              ...a,
+              answeredOption: condition.value ? condition.value : "",
+            };
+            answeredOptions.push(ansOptions);
+          }
+        }
+      }
+    }
+
     for (const ans of answered) {
       const root = await QuestionChainModel.findOne({
         _id: ans.questionChainId,
@@ -129,16 +149,54 @@ export class QuestionnaireService {
                     opt.totalStars += chosen.stars;
                     opt.average = opt.totalStars / opt.absoluteFrequency;
                   }
+
+                  //se buscan las subOptions
+                  for (const o of answeredOptions) {
+                    if (o.answeredOption === opt.name) {
+                      for (const chosen of o.chosenOption) {
+                        let index = opt.subOptions.findIndex((sub) => sub.id === chosen.optionId);
+                        if (index !== -1) {
+                          //@ts-ignore
+                          opt.subOptions[index].absoluteFrequency += 1;
+                        } else {
+                          let subOption:SubOption = {
+                            id: chosen.optionId,
+                            name: chosen.name,
+                            absoluteFrequency: 1,
+                            question: o.titleQuestion,
+                          };
+                          opt.subOptions.push(subOption);
+                        }
+                      }
+                    }
+                  }
                 }
               }
             } else {
-              let option = {
+              let subOptions: SubOption[] = [];
+
+              const option = {
                 id: chosen.optionId,
                 name: chosen.name,
                 absoluteFrequency: 1,
                 average: chosen.stars !== -1 ? chosen.stars : -1,
                 totalStars: chosen.stars !== -1 ? chosen.stars : -1,
+                subOptions: subOptions,
               };
+
+              for (const o of answeredOptions) {
+                if (o.answeredOption === chosen.name) {
+                  for (const ch of o.chosenOption) {
+                    let subOption: SubOption = {
+                      id: ch.optionId,
+                      name: ch.name,
+                      absoluteFrequency: 1,
+                      question: o.titleQuestion,
+                    };
+                    option.subOptions.push(subOption);
+                  }
+                }
+              }
               questionStatistics.options.push(option);
             }
           }
@@ -147,6 +205,9 @@ export class QuestionnaireService {
           const newQuestionStatistics = new QuestionStatisticModel({});
           newQuestionStatistics.questionId = root.id;
           newQuestionStatistics.questionnaireId = questionnaire?.id;
+
+          let subOptions: SubOption[] = [];
+
           for (const chosen of ans.chosenOption) {
             let selectedOpt = {
               id: chosen.optionId,
@@ -154,20 +215,33 @@ export class QuestionnaireService {
               absoluteFrequency: 1,
               average: chosen.stars !== -1 ? chosen.stars : -1,
               totalStars: chosen.stars !== -1 ? chosen.stars : -1,
-              //subOptions: []
+              subOptions: subOptions,
             };
+
+            for (const o of answeredOptions) {
+              if (o.answeredOption === chosen.name) {
+                for (const ch of o.chosenOption) {
+                  let subOption = {
+                    id: ch.optionId,
+                    name: ch.name,
+                    absoluteFrequency: 1,
+                    question: o.titleQuestion,
+                  };
+                  selectedOpt.subOptions.push(subOption);
+                }
+              }
+            }
+
             newQuestionStatistics.options.push(selectedOpt);
           }
           await newQuestionStatistics.save();
         }
-      } else {
-        //aca en una answered options
       }
     }
   }
 
   async sendQuestionnaireAnswered(data: { questionnaireId: string; brandId: string; answeredQuestionnaire: AnsweredQuestionnaire }) {
-    const { brandId, questionnaireId, answeredQuestionnaire } = data;
+    const { brandId, answeredQuestionnaire } = data;
 
     const statistics = await StatisticModel.findOne({ brandId });
     if (!statistics) {
@@ -194,4 +268,15 @@ interface AnsweredQuestionChain {
   questionChainId: string;
   titleQuestion: string;
   chosenOption: { optionId: string; stars: number; name: string }[];
+}
+
+interface AnsweredOption extends AnsweredQuestionChain {
+  answeredOption: string;
+}
+
+interface SubOption {
+  question: string;
+  id: string;
+  name: string;
+  absoluteFrequency: number;
 }

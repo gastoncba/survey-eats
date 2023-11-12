@@ -11,16 +11,16 @@ const QuestionStatistics = new Schema({
       id: String,
       name: String,
       absoluteFrequency: Number,
-      average: { type: Number, default: 0 },
-      totalStars: { type: Number, default: 0 },
-      // subOptions: [
-      //   {
-      //     id: String,
-      //     name: String,
-      //     absoluteFrequency: Number,
-      //     average: { type: Number, default: 0 },
-      //   },
-      // ],
+      average: { type: Number, default: null },
+      totalStars: { type: Number, default: null },
+      subOptions: [
+        {
+          question: String,
+          id: String,
+          name: String,
+          absoluteFrequency: Number,
+        },
+      ],
     },
   ], 
 });
