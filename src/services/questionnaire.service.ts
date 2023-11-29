@@ -5,8 +5,9 @@ import BrandModel from "../models/brand.model";
 import QuestionChainModel from "../models/questionChain.model";
 import StatisticModel from "../models/statistics.model";
 import QuestionStatisticModel from "../models/questionStatistics.model";
-import ConditionModel, { EntityToCompare } from "../models/condition.model";
-import { OptionModel } from "../models/option.model";
+import ConditionModel from "../models/condition.model";
+import GiftModel from "../models/gift.model";
+import QuestionModel from "../models/question.model";
 
 export class QuestionnaireService {
   constructor() {}
@@ -62,7 +63,7 @@ export class QuestionnaireService {
   async remove(id: string) {
     const brand = await BrandModel.findOne({ questionnaires: { $in: [id] } });
     if (!brand) {
-      throw boom.notFound(`brand #${id} not found`);
+      throw boom.notFound(`questionnaire #${id} not found in brand`);
     }
 
     await BrandModel.updateOne({ _id: brand._id }, { $pull: { questionnaires: id } });
@@ -73,8 +74,13 @@ export class QuestionnaireService {
     }
 
     const questionChainIds = foundQuestionnaire.questionChains.map((questionChain) => questionChain._id);
+    const questionGifts = foundQuestionnaire.gifts.map((gift) => gift._id);
 
     await QuestionChainModel.deleteMany({ _id: { $in: questionChainIds } });
+    await GiftModel.deleteMany({ _id: { $in: questionGifts } });
+
+    /*Eliminamos question statistic de ese cuestionario*/
+    await QuestionStatisticModel.deleteOne({ questionnaireId: foundQuestionnaire._id });
   }
 
   async getAnyQuestionnaire(brandId: string, questionnaireId?: string) {
@@ -118,10 +124,10 @@ export class QuestionnaireService {
     let answeredOptions: AnsweredOption[] = [];
     const ansOptionsModel = await QuestionChainModel.find({ _id: { $in: questionaChainsId }, conditions: { $ne: null } });
 
-    for (const ansOpt of ansOptionsModel) {
+    for (const ansOptModel of ansOptionsModel) {
       for (const a of answered) {
-        if (ansOpt._id.toString() === a.questionChainId) {
-          const condition = await ConditionModel.findById(ansOpt.conditions[0]._id);
+        if (ansOptModel._id.toString() === a.questionChainId) {
+          const condition = await ConditionModel.findById(ansOptModel.conditions[0]._id);
           if (condition) {
             let ansOptions: AnsweredOption = {
               ...a,
@@ -152,14 +158,14 @@ export class QuestionnaireService {
 
                   //se buscan las subOptions
                   for (const o of answeredOptions) {
-                    if (o.answeredOption === opt.name) {
+                    if (o.answeredOption === opt.id) {
                       for (const chosen of o.chosenOption) {
                         let index = opt.subOptions.findIndex((sub) => sub.id === chosen.optionId);
                         if (index !== -1) {
                           //@ts-ignore
                           opt.subOptions[index].absoluteFrequency += 1;
                         } else {
-                          let subOption:SubOption = {
+                          let subOption: SubOption = {
                             id: chosen.optionId,
                             name: chosen.name,
                             absoluteFrequency: 1,
@@ -185,7 +191,7 @@ export class QuestionnaireService {
               };
 
               for (const o of answeredOptions) {
-                if (o.answeredOption === chosen.name) {
+                if (o.answeredOption === chosen.optionId) {
                   for (const ch of o.chosenOption) {
                     let subOption: SubOption = {
                       id: ch.optionId,
@@ -203,13 +209,14 @@ export class QuestionnaireService {
           await questionStatistics.save();
         } else {
           const newQuestionStatistics = new QuestionStatisticModel({});
-          newQuestionStatistics.questionId = root.id;
-          newQuestionStatistics.questionnaireId = questionnaire?.id;
-
-          let subOptions: SubOption[] = [];
+          const rootQuestion = await QuestionModel.findById(root.question);
+          newQuestionStatistics.question = rootQuestion?._id;
+          newQuestionStatistics.questionnaireId = questionnaire?._id;
 
           for (const chosen of ans.chosenOption) {
-            let selectedOpt = {
+            let subOptions: SubOption[] = [];
+
+            const option = {
               id: chosen.optionId,
               name: chosen.name,
               absoluteFrequency: 1,
@@ -219,20 +226,19 @@ export class QuestionnaireService {
             };
 
             for (const o of answeredOptions) {
-              if (o.answeredOption === chosen.name) {
+              if (o.answeredOption === chosen.optionId) {
                 for (const ch of o.chosenOption) {
-                  let subOption = {
+                  let subOption: SubOption = {
                     id: ch.optionId,
                     name: ch.name,
                     absoluteFrequency: 1,
                     question: o.titleQuestion,
                   };
-                  selectedOpt.subOptions.push(subOption);
+                  option.subOptions.push(subOption);
                 }
               }
             }
-
-            newQuestionStatistics.options.push(selectedOpt);
+            newQuestionStatistics.options.push(option);
           }
           await newQuestionStatistics.save();
         }
@@ -241,19 +247,23 @@ export class QuestionnaireService {
   }
 
   async sendQuestionnaireAnswered(data: { questionnaireId: string; brandId: string; answeredQuestionnaire: AnsweredQuestionnaire }) {
-    const { brandId, answeredQuestionnaire } = data;
+    const { brandId, answeredQuestionnaire, questionnaireId } = data;
+
+    await this.createQuestionStatistics(answeredQuestionnaire);
+
+    /** Encontramos la instancia de questionStatistic por questionnaireId */
+    const qStatistics = await QuestionStatisticModel.find({ questionnaireId });
+    let idQuestionStatistics = qStatistics.map((qs) => qs._id);
 
     const statistics = await StatisticModel.findOne({ brandId });
     if (!statistics) {
-      const newStatistic = new StatisticModel({});
-      newStatistic.answeredQuestionnaires++;
+      const newStatistic = new StatisticModel({ brandId, answeredQuestionnaires: 1, questionStatistics: idQuestionStatistics });
       await newStatistic.save();
     } else {
       statistics.answeredQuestionnaires++;
-      statistics.save();
+      statistics.questionStatistics = idQuestionStatistics;
+      await statistics.save();
     }
-
-    await this.createQuestionStatistics(answeredQuestionnaire);
   }
 }
 

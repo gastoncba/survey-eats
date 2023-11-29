@@ -2,10 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const StatisticSchema = new Schema({
   answeredQuestionnaires: { type: Number, default: 0 },
-  brandId: {
-    type: Schema.Types.ObjectId,
-    ref: "Brand",
-  },
+  brandId: String,
   questionStatistics: [
     {
       type: Schema.Types.ObjectId,

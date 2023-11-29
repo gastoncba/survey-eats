@@ -5,9 +5,13 @@ const QuestionStatistics = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Questionnaire",
   },
-  questionId: { type: Schema.Types.ObjectId, ref: "Question" },
+  question: {
+    type: Schema.Types.ObjectId,
+    ref: "Question"
+  },
   options: [
     {
+      //questionChainId: String -> cuando se elimina un question chain se deberia eliminar tambien una instancia de questionStatistics
       id: String,
       name: String,
       absoluteFrequency: Number,

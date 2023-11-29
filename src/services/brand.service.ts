@@ -3,6 +3,7 @@ import QueryString from "qs";
 
 import BrandModel from "../models/brand.model";
 import QuestionnaireModel from "../models/questionnaire.model";
+import StatisticModel from "../models/statistics.model";
 
 export class BrandsService {
   constructor() {}
@@ -10,12 +11,12 @@ export class BrandsService {
   async find(query: QueryString.ParsedQs) {
     const { name } = query;
 
-    const brands = await BrandModel.find(name ? { name } : {}).select({questionnaires: 0});
+    const brands = await BrandModel.find(name ? { name } : {}).select({ questionnaires: 0 });
     return brands;
   }
 
   async findOne(id: string) {
-    const brand = await BrandModel.findById(id).select({questionnaires: 0});;
+    const brand = await BrandModel.findById(id).select({ questionnaires: 0 });
     if (!brand) {
       throw boom.notFound(`brand #${id} not found`);
     }
@@ -38,13 +39,24 @@ export class BrandsService {
   }
 
   async remove(id: string) {
-
     const foundBrand = await BrandModel.findByIdAndDelete(id);
     if (!foundBrand) {
       throw boom.notFound(`brand #${id} not found`);
     }
 
-    const questionnaireIds = foundBrand.questionnaires.map(questionnaire => questionnaire._id)
-    await QuestionnaireModel.deleteMany({_id: {$in: questionnaireIds}})
+    const questionnaireIds = foundBrand.questionnaires.map((questionnaire) => questionnaire._id);
+    await QuestionnaireModel.deleteMany({ _id: { $in: questionnaireIds } });
+  }
+
+  async getStatistics(brandId: string) {
+    const statistics = await StatisticModel.findOne({ brandId })
+      .populate({ path: "questionStatistics", populate: [{ path: "questionnaireId" }, { path: "question" }] })
+      .select({ brandId: 0 }).exec();
+
+    if (!statistics) {
+      throw boom.notFound(`brand #${brandId} not have statistics`);
+    }
+
+    return statistics;
   }
 }
