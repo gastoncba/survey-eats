@@ -11,7 +11,6 @@ const QuestionStatistics = new Schema({
   },
   options: [
     {
-      //questionChainId: String -> cuando se elimina un question chain se deberia eliminar tambien una instancia de questionStatistics
       id: String,
       name: String,
       absoluteFrequency: Number,
