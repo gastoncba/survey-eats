@@ -1,8 +1,9 @@
-import * as dotenv from 'dotenv'
+import * as dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 export const config = {
-    uri: process.env.MONGO_URL || ''
-}
-
+  uri: process.env.MONGO_URL || "",
+  apiKey: process.env.API_KEY || "",
+  jwtSecret: process.env.JWT_SECRET || "",
+};

@@ -2,12 +2,9 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 
 import { routerApi } from "./routes";
-import {
-  logError,
-  boomErrorHandler,
-  errorHandler,
-} from "./middleware/error.handler";
+import { logError, boomErrorHandler, errorHandler } from "./middleware/error.handler";
 import { initialize } from "./database/database";
+import { initializeStrategies } from "./utils/auth";
 
 (async () => {
   try {
@@ -21,6 +18,8 @@ import { initialize } from "./database/database";
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+initializeStrategies();
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello from Survey Eats!");
