@@ -8,6 +8,7 @@ const UserSchema = new Schema({
   brand: {
     type: Schema.Types.ObjectId,
     ref: "Brand",
+    default: null
   },
 });
 

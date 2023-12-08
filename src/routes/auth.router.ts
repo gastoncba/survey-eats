@@ -15,8 +15,8 @@ router.post("/login", passport.authenticate("local", { session: false }), async 
     const { jwtSecret } = config;
     const userReturned = user.toJSON();
     delete userReturned.password;
-    const token = jwt.sign(payload, jwtSecret);
-    res.json({ user: userReturned, token });
+    const access_token = jwt.sign(payload, jwtSecret);
+    res.json({ user: userReturned, token: { access_token } });
   } catch (error) {
     next(error);
   }

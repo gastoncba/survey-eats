@@ -4,6 +4,7 @@ import QueryString from "qs";
 import BrandModel from "../models/brand.model";
 import QuestionnaireModel from "../models/questionnaire.model";
 import StatisticModel from "../models/statistics.model";
+import UserModel from "../models/User.model";
 
 export class BrandsService {
   constructor() {}
@@ -23,9 +24,18 @@ export class BrandsService {
     return brand;
   }
 
-  async create(data: any) {
-    const brand = new BrandModel(data);
-    return await brand.save();
+  async create(data: any, userId: string) {
+    const user = await UserModel.findByIdAndUpdate(
+      userId,
+      { $set: { brand: new BrandModel(data)._id } },
+      { new: true }
+    ).populate("brand");
+  
+    if (!user) {
+      throw boom.notFound(`User #${userId} not found`);
+    }
+  
+    return user.brand;
   }
 
   async update(id: string, change: any) {
@@ -51,7 +61,8 @@ export class BrandsService {
   async getStatistics(brandId: string) {
     const statistics = await StatisticModel.findOne({ brandId })
       .populate({ path: "questionStatistics", populate: [{ path: "questionnaireId" }, { path: "question" }] })
-      .select({ brandId: 0 }).exec();
+      .select({ brandId: 0 })
+      .exec();
 
     if (!statistics) {
       throw boom.notFound(`brand #${brandId} not have statistics`);

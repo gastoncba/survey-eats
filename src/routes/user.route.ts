@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
+import passport from "passport";
 
 import { UserService } from "../services/user.service";
 import { createUserSchema } from "../schemas/user.schema";
@@ -15,6 +16,17 @@ router.post("/create", validatorHandler(createUserSchema, "body"), async (req: R
       message: `Create`,
       data: user,
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/", passport.authenticate("jwt", { session: false }), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const payload: any = req.user;
+    const userId = payload.sub;
+    const user = await userService.findById(userId);
+    res.json(user);
   } catch (error) {
     next(error);
   }
