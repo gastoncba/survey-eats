@@ -1,7 +1,7 @@
 import * as boom from "@hapi/boom";
 import bcrypt from "bcrypt";
 
-import UserModel from "../models/User.model";
+import UserModel from "../models/user.model";
 
 export class UserService {
   constructor() {}
@@ -22,7 +22,7 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    return await UserModel.findOne({ email });
+    return await UserModel.findOne({ email }).populate("brand");
   }
 
   async findById(userId: string) {
