@@ -8,7 +8,7 @@ import { router as questionnaireRouter } from "./questionnaire.router";
 import { router as questionChainRouter } from "./questionChain.router";
 import { router as conditionRouter } from "./condition.router";
 import { router as giftRouter } from "./gift.router";
-import { router as userRouter } from "./user.route";
+//import { router as userRouter } from "./user.route";
 import { router as authRouter } from "./auth.router";
 
 export const routerApi = (app: Express) => {
@@ -21,6 +21,6 @@ export const routerApi = (app: Express) => {
   router.use("/questionChains", passport.authenticate("jwt", { session: false }), questionChainRouter);
   router.use("/conditions", passport.authenticate("jwt", { session: false }), conditionRouter);
   router.use("/gifts", passport.authenticate("jwt", { session: false }), giftRouter);
-  router.use("/user", userRouter);
+  //router.use("/user", userRouter);
   router.use("/auth", authRouter);
 };
