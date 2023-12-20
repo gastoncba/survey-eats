@@ -1,22 +1,36 @@
 import express, { NextFunction, Request, Response } from "express";
 import passport from "passport";
-import jwt from "jsonwebtoken";
 
-import { config } from "../config/config";
+import { AuthService } from "../services/auth.service";
+import { validatorHandler } from "../middleware/validator.handler";
+import { changePasswordSchema, loginSchema, recoverySchema } from "../schemas/auth.schema";
 
 export const router = express.Router();
+const authService = new AuthService();
 
-router.post("/login", passport.authenticate("local", { session: false }), async (req: Request, res: Response, next: NextFunction) => {
+router.post("/login", validatorHandler(loginSchema, "body"), passport.authenticate("local", { session: false }), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user: any = req.user;
-    const payload = {
-      sub: user._id,
-    };
-    const { jwtSecret } = config;
-    const userReturned = user.toJSON();
-    delete userReturned.password;
-    const access_token = jwt.sign(payload, jwtSecret);
-    res.json({ user: userReturned, token: { access_token } });
+    res.json(authService.signToken(user));
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/recovery", validatorHandler(recoverySchema, "body"), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body;
+    const rta = await authService.sendRecovery(email);
+    res.json(rta);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/change-password", validatorHandler(changePasswordSchema, "body"), async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token, newPassword } = req.body;
+    res.json(await authService.changePassword(token, newPassword));
   } catch (error) {
     next(error);
   }

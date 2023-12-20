@@ -1,23 +1,13 @@
 import { Strategy } from "passport-local";
-import * as boom from "@hapi/boom";
-import bcrypt from "bcrypt";
 
-import { UserService } from "../../../services/user.service";
+import { AuthService } from "../../../services/auth.service";
 
-const userService = new UserService();
+const authService = new AuthService();
 
 export const localStrategy = new Strategy({ usernameField: "email" }, async (email: string, password: string, done) => {
   try {
-    const user = await userService.findByEmail(email);
-    if (!user) {
-      done(boom.unauthorized(), false);
-    }
-
-    const isMatch = await bcrypt.compare(password, user?.password || "");
-    if (!isMatch) {
-      done(boom.unauthorized(), false);
-    }
-    done(null, user || {});
+    const user = await authService.getUser(email, password);
+    done(null, user);
   } catch (error) {
     done(error, false);
   }

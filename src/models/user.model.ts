@@ -10,6 +10,10 @@ const UserSchema = new Schema({
     ref: "Brand",
     default: null
   },
+  recoveryToken: {
+    type: String,
+    default: null
+  }
 });
 
 const UserModel = mongoose.model("User", UserSchema);

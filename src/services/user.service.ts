@@ -33,7 +33,28 @@ export class UserService {
     }
 
     const userJson = user.toJSON();
-    delete userJson.password
+    const { recoveryToken, password, ...userReturned } = userJson;
+    return userReturned;
+  }
+
+  async findUserComplete(userId: string) {
+    const user = await UserModel.findById(userId).populate("brand");
+
+    if (!user) {
+      throw boom.notFound(`user #${userId} not found`);
+    }
+
+    const userJson = user.toJSON();
     return userJson;
+  }
+
+  async update(id: string, changes: any) {
+    const updatedUser = await UserModel.findByIdAndUpdate(id, changes, {
+      new: true,
+    });
+    if (!updatedUser) {
+      throw boom.notFound(`user #${id} not found`);
+    }
+    return updatedUser;
   }
 }

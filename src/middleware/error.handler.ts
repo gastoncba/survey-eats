@@ -30,5 +30,6 @@ export const boomErrorHandler = (
     const { output } = err;
     res.status(output.statusCode).json(output.payload)
   }
+  console.log(err)
   next(err)
 };
