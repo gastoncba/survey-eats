@@ -8,6 +8,11 @@ import QuestionStatisticModel from "../models/questionStatistics.model";
 import ConditionModel from "../models/condition.model";
 import GiftModel from "../models/gift.model";
 import QuestionModel from "../models/question.model";
+import { GiftService } from "./gift.service";
+import { EmailService } from "./email.service";
+
+const giftService = new GiftService();
+const emailService = new EmailService();
 
 export class QuestionnaireService {
   constructor() {}
@@ -264,6 +269,39 @@ export class QuestionnaireService {
       statistics.questionStatistics = idQuestionStatistics;
       await statistics.save();
     }
+  }
+
+  async sendGifts(giftsId: string[], email: string) {
+    const gifts = await giftService.findGifts(giftsId);
+
+    let html = `
+        <div style="font-family: 'Arial', sans-serif; color: #333; padding: 20px;">
+            <h2 style="color: #009688;">¡Tus Premios!</h2>
+            <p>¡Gracias por contestar nuestra encuesta! Aquí están tus premios:</p>
+            <ul style="list-style-type: none; padding: 0;">
+
+    `;
+
+    gifts.forEach((gift) => {
+        const currentDate = new Date();
+        const validDays = gift.validDays || 0
+        const expirationDate = new Date(currentDate.getTime() + validDays * 24 * 60 * 60 * 1000);
+        const formattedExpirationDate = `${expirationDate.getDate()}/${expirationDate.getMonth() + 1}/${expirationDate.getFullYear()}`;
+        html += `
+            <li style="margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                <h3>${gift.name}</h3>
+                <p>${gift.description}</p>
+                <p><em>Valido hasta el ${formattedExpirationDate}</em></p>
+            </li>
+        `;
+    });
+
+    html += `
+            </ul>
+            <p style="margin-top: 20px;">¡Esperamos que disfrutes de tus premios!</p>
+        </div>
+    `;
+    await emailService.sendEmail(email, "¡Tus Premios!", html);
   }
 }
 

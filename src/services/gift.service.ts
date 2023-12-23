@@ -42,21 +42,30 @@ export class GiftService {
 
   async remove(id: string) {
     const foundQuestionnaire = await QuestionnaireModel.findOne({
-        gifts: { $in: [id] },
-      });
-  
-      if (!foundQuestionnaire) {
-        throw boom.notFound(`questionnaire not found`);
-      }
-  
-      await QuestionnaireModel.updateOne(
-        { _id: foundQuestionnaire._id },
-        { $pull: { gifts: id } }
-      );
-  
-      const deletedGift = await GiftModel.findByIdAndRemove(id);
-      if (!deletedGift) {
-        throw boom.notFound(`gift chain #${id} not found`);
-      }
+      gifts: { $in: [id] },
+    });
+
+    if (!foundQuestionnaire) {
+      throw boom.notFound(`questionnaire not found`);
+    }
+
+    await QuestionnaireModel.updateOne({ _id: foundQuestionnaire._id }, { $pull: { gifts: id } });
+
+    const deletedGift = await GiftModel.findByIdAndRemove(id);
+    if (!deletedGift) {
+      throw boom.notFound(`gift chain #${id} not found`);
+    }
+  }
+
+  async findGifts(giftsId: string[]) {
+    const gifts = await GiftModel.find({
+      _id: { $in: giftsId },
+    });
+
+    if (gifts.length === 0) {
+      throw boom.notFound("not found gifts");
+    }
+
+    return gifts;
   }
 }

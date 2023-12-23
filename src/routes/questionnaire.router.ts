@@ -3,7 +3,7 @@ import passport from "passport";
 
 import { QuestionnaireService } from "../services/questionnaire.service";
 import { validatorHandler } from "../middleware/validator.handler";
-import { createQuestionnaireSchema, getAllQuestionnaireSchema, getQuestionnaireSchema, updateQuestionnaireSchema, createStatisticsSchema, queryQuestionnaireIdSchema } from "../schemas/questionnaire.schema";
+import { createQuestionnaireSchema, getAllQuestionnaireSchema, getQuestionnaireSchema, updateQuestionnaireSchema, createStatisticsSchema, queryQuestionnaireIdSchema, sendGiftSchema } from "../schemas/questionnaire.schema";
 
 export const router = express.Router();
 const questionnaireService = new QuestionnaireService();
@@ -87,6 +87,16 @@ router.delete("/:id", passport.authenticate("jwt", { session: false }), validato
     res.json({
       message: `questionnaire #id ${id} delete`,
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/send-gifts", validatorHandler(sendGiftSchema, "body"), async (req: Request, res: Response, next: NextFunction) => {
+  const { giftsId, email } = req.body;
+  try {
+    await questionnaireService.sendGifts(giftsId, email);
+    res.json({ message: "gifts sent" })
   } catch (error) {
     next(error);
   }
