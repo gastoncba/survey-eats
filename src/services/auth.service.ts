@@ -1,12 +1,13 @@
 import * as boom from "@hapi/boom";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
 
 import { UserService } from "./user.service";
+import { EmailService } from "./email.service";
 import { config } from "../config/config";
 
 const userService = new UserService();
+const emailService = new EmailService();
 
 export class AuthService {
   constructor() {}
@@ -52,14 +53,9 @@ export class AuthService {
 
     await userService.update(user.id, { recoveryToken: token });
 
-    const mailOptions = {
-      from: config.smtpUser,
-      to: email,
-      subject: "Recuperar constraseña",
-      html: `<b>Ingresa a este link para recuperar tu constraseña</b><p>${link}</p>`,
-    };
-
-    return await this.sendEmail(mailOptions);
+    const subject = "Recuperar constraseña";
+    const html = `<b>Ingrese a este link para recuperar tu constraseña</b><p>${link}</p>`;
+    return await this.sendEmail(email, subject, html);
   }
 
   async changePassword(token: string, newPassword: string) {
@@ -79,19 +75,7 @@ export class AuthService {
     }
   }
 
-  async sendEmail(mailOptions: any) {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: config.smtpUser,
-        pass: config.smtpPass,
-      },
-    });
-
-    await transporter.sendMail(mailOptions);
-
-    return { message: "mail sent" };
+  async sendEmail(destinationEmail: string, subject?: string, html?: string) {
+    return await emailService.sendEmail(destinationEmail, subject, html);
   }
 }

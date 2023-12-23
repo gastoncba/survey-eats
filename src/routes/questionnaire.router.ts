@@ -96,7 +96,7 @@ router.post("/send-gifts", validatorHandler(sendGiftSchema, "body"), async (req:
   const { giftsId, email } = req.body;
   try {
     await questionnaireService.sendGifts(giftsId, email);
-    res.json({ message: "gifts sent" })
+    res.json({ message: "gifts sent" });
   } catch (error) {
     next(error);
   }
