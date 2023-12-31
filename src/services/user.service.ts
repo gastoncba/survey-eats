@@ -2,6 +2,9 @@ import * as boom from "@hapi/boom";
 import bcrypt from "bcrypt";
 
 import UserModel from "../models/user.model";
+import { BrandsService } from "./brand.service";
+
+const brandService = new BrandsService()
 
 export class UserService {
   constructor() {}
@@ -56,5 +59,11 @@ export class UserService {
       throw boom.notFound(`user #${id} not found`);
     }
     return updatedUser;
+  }
+
+  async updateAll(userId: string, brandId: string, changes: { firstName?: string, lastName?: string, email?: string, brandName?: string}) {
+    const { brandName, ...userChanges } = changes
+    await brandService.update(brandId, { name: brandName })
+    return await this.update(userId, userChanges)
   }
 }

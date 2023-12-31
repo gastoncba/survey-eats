@@ -46,7 +46,7 @@ router.put("/:id", validatorHandler(getBrandSchema, "params"), validatorHandler(
   const { id } = req.params;
 
   try {
-    const brand = await brandService.update(body, id);
+    const brand = await brandService.update(id, body);
     res.json({
       message: `update`,
       data: brand,
