@@ -44,4 +44,5 @@ export const queryQuestionnaireIdSchema = Joi.object({
 export const sendGiftSchema = Joi.object({
   email: email.required(),
   giftsId: giftsId.required(),
+  brandId: brandId.required()
 });

@@ -6,7 +6,7 @@ import { validatorHandler } from "../middleware/validator.handler";
 import { createQuestionnaireSchema, getAllQuestionnaireSchema, getQuestionnaireSchema, updateQuestionnaireSchema, createStatisticsSchema, queryQuestionnaireIdSchema, sendGiftSchema } from "../schemas/questionnaire.schema";
 
 export const router = express.Router();
-const questionnaireService = new QuestionnaireService();
+const questionnaireService = QuestionnaireService.getInstance();
 
 router.get("/brand/:brandId", passport.authenticate("jwt", { session: false }), validatorHandler(getAllQuestionnaireSchema, "params"), async (req: Request, res: Response, next: NextFunction) => {
   const { brandId } = req.params;
@@ -93,9 +93,9 @@ router.delete("/:id", passport.authenticate("jwt", { session: false }), validato
 });
 
 router.post("/send-gifts", validatorHandler(sendGiftSchema, "body"), async (req: Request, res: Response, next: NextFunction) => {
-  const { giftsId, email } = req.body;
+  const { giftsId, email, brandId } = req.body;
   try {
-    await questionnaireService.sendGifts(giftsId, email);
+    await questionnaireService.sendGifts(giftsId, email, brandId);
     res.json({ message: "gifts sent" });
   } catch (error) {
     next(error);

@@ -3,8 +3,10 @@ import QueryString from "qs";
 
 import BrandModel from "../models/brand.model";
 import QuestionnaireModel from "../models/questionnaire.model";
-import StatisticModel from "../models/statistics.model";
 import UserModel from "../models/user.model";
+import { StatisticService } from "./statistic.service";
+
+const statisticService = new StatisticService();
 
 export class BrandsService {
   constructor() {}
@@ -59,19 +61,6 @@ export class BrandsService {
   async getStatistics(brandId: string) {
     await this.findOne(brandId);
 
-    const statistics = await StatisticModel.findOne({ brandId })
-      .populate({ path: "questionStatistics", populate: [{ path: "questionnaireId" }, { path: "question" }] })
-      .select({ brandId: 0 })
-      .exec();
-
-    if (!statistics) {
-      return {
-        _id: "",
-        answeredQuestionnaires: 0,
-        questionStatistics: [],
-      };
-    }
-
-    return statistics;
+    return await statisticService.getStatistics(brandId);
   }
 }
