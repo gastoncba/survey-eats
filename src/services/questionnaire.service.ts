@@ -9,12 +9,11 @@ import { GiftService } from "./gift.service";
 import { EmailService } from "./email.service";
 import { StatisticService, AnsweredQuestionnaire } from "./statistic.service";
 
-const giftService = new GiftService();
-const emailService = new EmailService();
-const statisticService = new StatisticService();
+const giftService = GiftService.getInstance();
+const emailService = EmailService.getInstance();
+const statisticService = StatisticService.getInstance();
 
 export class QuestionnaireService {
-
   private static instance: QuestionnaireService;
 
   private constructor() {}

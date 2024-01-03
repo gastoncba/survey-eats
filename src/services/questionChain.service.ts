@@ -4,17 +4,25 @@ import QuestionChainModel from "../models/questionChain.model";
 import QuestionnaireModel from "../models/questionnaire.model";
 
 export class QuestionChainService {
-  constructor() {}
+  private static instance: QuestionChainService;
+
+  private constructor() {}
+
+  public static getInstance(): QuestionChainService {
+    if (!QuestionChainService.instance) {
+      QuestionChainService.instance = new QuestionChainService();
+    }
+    return QuestionChainService.instance;
+  }
 
   async create(data: any, questionnaireId: string) {
-
     const questionnaire = await QuestionnaireModel.findById(questionnaireId);
     if (questionnaire) {
       const qChain = new QuestionChainModel(data);
       await qChain.save();
       questionnaire.questionChains.push(qChain._id);
       await questionnaire.save();
-      return qChain
+      return qChain;
     } else {
       throw boom.notFound(`questionnaire #${questionnaireId} not found`);
     }
@@ -45,11 +53,7 @@ export class QuestionChainService {
   }
 
   async update(change: any, id: string) {
-    const updateQChain = await QuestionChainModel.findByIdAndUpdate(
-      id,
-      change,
-      { new: true }
-    );
+    const updateQChain = await QuestionChainModel.findByIdAndUpdate(id, change, { new: true });
     if (!updateQChain) {
       throw boom.notFound(`question chain #${id} not found`);
     }
@@ -65,10 +69,7 @@ export class QuestionChainService {
       throw boom.notFound(`questionnaire not found`);
     }
 
-    await QuestionnaireModel.updateOne(
-      { _id: foundQuestionnaire._id },
-      { $pull: { questionChains: id } }
-    );
+    await QuestionnaireModel.updateOne({ _id: foundQuestionnaire._id }, { $pull: { questionChains: id } });
 
     const deletedQChain = await QuestionChainModel.findByIdAndRemove(id);
     if (!deletedQChain) {

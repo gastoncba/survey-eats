@@ -6,10 +6,19 @@ import QuestionnaireModel from "../models/questionnaire.model";
 import UserModel from "../models/user.model";
 import { StatisticService } from "./statistic.service";
 
-const statisticService = new StatisticService();
+const statisticService = StatisticService.getInstance();
 
 export class BrandsService {
-  constructor() {}
+  private static instance: BrandsService;
+
+  private constructor() {}
+
+  public static getInstance(): BrandsService {
+    if (!BrandsService.instance) {
+      BrandsService.instance = new BrandsService();
+    }
+    return BrandsService.instance;
+  }
 
   async find(query: QueryString.ParsedQs) {
     const { name } = query;

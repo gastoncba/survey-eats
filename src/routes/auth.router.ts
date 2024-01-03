@@ -6,7 +6,7 @@ import { validatorHandler } from "../middleware/validator.handler";
 import { changePasswordSchema, loginSchema, recoverySchema } from "../schemas/auth.schema";
 
 export const router = express.Router();
-const authService = new AuthService();
+const authService = AuthService.getInstance();
 
 router.post("/login", validatorHandler(loginSchema, "body"), passport.authenticate("local", { session: false }), async (req: Request, res: Response, next: NextFunction) => {
   try {

@@ -3,7 +3,16 @@ import nodemailer from "nodemailer";
 import { config } from "../config/config";
 
 export class EmailService {
-  constructor() {}
+  private static instance: EmailService;
+
+  private constructor() {}
+
+  public static getInstance(): EmailService {
+    if (!EmailService.instance) {
+      EmailService.instance = new EmailService();
+    }
+    return EmailService.instance;
+  }
 
   async sendEmail(destinationEmail: string, subject?: string, html?: string) {
     const transporter = nodemailer.createTransport({

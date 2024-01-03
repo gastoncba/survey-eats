@@ -7,10 +7,19 @@ import QuestionModel from "../models/question.model";
 import QuestionnaireModel from "../models/questionnaire.model";
 import { DinersServices } from "./diner.service";
 
-const dinersServices = DinersServices.getInstance()
+const dinersServices = DinersServices.getInstance();
 
 export class StatisticService {
-  constructor() {}
+  private static instance: StatisticService;
+
+  private constructor() {}
+
+  public static getInstance(): StatisticService {
+    if (!StatisticService.instance) {
+      StatisticService.instance = new StatisticService();
+    }
+    return StatisticService.instance;
+  }
 
   incluideOption(optionId: string, options: any[]) {
     for (const opt of options) {
@@ -212,20 +221,20 @@ export class StatisticService {
   }
 
   async calculateRepurchases(email: string, brandId: string) {
-    const statistics = await StatisticModel.findOne({ brandId })
-    
-    if(statistics) {
-      const existsDiner = await dinersServices.exists(email)
-      if(existsDiner) {
-        const visitedBrand = await dinersServices.visited(email, brandId)
-        if(visitedBrand) {
+    const statistics = await StatisticModel.findOne({ brandId });
+
+    if (statistics) {
+      const existsDiner = await dinersServices.exists(email);
+      if (existsDiner) {
+        const visitedBrand = await dinersServices.visited(email, brandId);
+        if (visitedBrand) {
           statistics.repurchases++;
-          statistics.save()
+          statistics.save();
         } else {
-          dinersServices.addBrand(email, brandId)
+          dinersServices.addBrand(email, brandId);
         }
       } else {
-        await dinersServices.create(email, brandId)
+        await dinersServices.create(email, brandId);
       }
     }
   }

@@ -3,7 +3,16 @@ import * as boom from "@hapi/boom";
 import ConditionModel from "../models/condition.model";
 
 export class ConditionService {
-  constructor() {}
+  private static instance: ConditionService;
+
+  private constructor() {}
+
+  public static getInstance(): ConditionService {
+    if (!ConditionService.instance) {
+      ConditionService.instance = new ConditionService();
+    }
+    return ConditionService.instance;
+  }
 
   async create(data: any) {
     const condition = new ConditionModel(data);
@@ -11,12 +20,12 @@ export class ConditionService {
   }
 
   async find(brandId: string) {
-    const conditions = await ConditionModel.find({ brandId }).select({brandId: 0});
+    const conditions = await ConditionModel.find({ brandId }).select({ brandId: 0 });
     return conditions;
   }
 
   async findOne(id: string) {
-    const foundCondition = ConditionModel.findById(id).select({brandId: 0});
+    const foundCondition = ConditionModel.findById(id).select({ brandId: 0 });
 
     if (!foundCondition) {
       throw boom.notFound(`condition #${id} not found`);

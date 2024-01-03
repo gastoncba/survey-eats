@@ -4,10 +4,19 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/user.model";
 import { BrandsService } from "./brand.service";
 
-const brandService = new BrandsService()
+const brandService = BrandsService.getInstance();
 
 export class UserService {
-  constructor() {}
+  private static instance: UserService;
+
+  private constructor() {}
+
+  public static getInstance(): UserService {
+    if (!UserService.instance) {
+      UserService.instance = new UserService();
+    }
+    return UserService.instance;
+  }
 
   async create(data: any) {
     const foundUser = await this.findByEmail(data.email);
@@ -61,9 +70,9 @@ export class UserService {
     return updatedUser;
   }
 
-  async updateAll(userId: string, brandId: string, changes: { firstName?: string, lastName?: string, email?: string, brandName?: string}) {
-    const { brandName, ...userChanges } = changes
-    await brandService.update(brandId, { name: brandName })
-    return await this.update(userId, userChanges)
+  async updateAll(userId: string, brandId: string, changes: { firstName?: string; lastName?: string; email?: string; brandName?: string }) {
+    const { brandName, ...userChanges } = changes;
+    await brandService.update(brandId, { name: brandName });
+    return await this.update(userId, userChanges);
   }
 }
