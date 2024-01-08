@@ -5,7 +5,7 @@ import { createBrandSchema, updateBrandSchema, getBrandSchema, queryBrandSchema 
 import { validatorHandler } from "../middleware/validator.handler";
 
 export const router = express.Router();
-const brandService = BrandsService.getInstance();
+const brandService = new BrandsService();
 
 router.get("/", validatorHandler(queryBrandSchema, "query"), async (req: Request, res: Response, next: NextFunction) => {
   try {

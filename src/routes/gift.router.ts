@@ -5,7 +5,7 @@ import { validatorHandler } from "../middleware/validator.handler";
 import { createGiftSchema, getAllGiftSchema, getGiftSchema, updateGiftSchema } from "../schemas/gift.schema";
 
 export const router = express.Router();
-const giftService = GiftService.getInstance();
+const giftService = new GiftService();
 
 router.get("/questionnaire/:questionnaireId", validatorHandler(getAllGiftSchema, "params"), async (req: Request, res: Response, next: NextFunction) => {
   const { questionnaireId } = req.params;

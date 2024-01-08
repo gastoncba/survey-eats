@@ -3,16 +3,7 @@ import mongoose from "mongoose";
 import DinerModel from "../models/diner.model";
 
 export class DinersServices {
-  private static instance: DinersServices;
-
-  private constructor() {}
-
-  public static getInstance(): DinersServices {
-    if (!DinersServices.instance) {
-      DinersServices.instance = new DinersServices();
-    }
-    return DinersServices.instance;
-  }
+  constructor() {}
 
   async exists(email: string) {
     const diner = await DinerModel.findOne({ email });

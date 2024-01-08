@@ -4,16 +4,7 @@ import QuestionModel from "../models/question.model";
 import QuestionChainModel from "../models/questionChain.model";
 
 export class QuestionsService {
-  private static instance: QuestionsService;
-
-  private constructor() {}
-
-  public static getInstance(): QuestionsService {
-    if (!QuestionsService.instance) {
-      QuestionsService.instance = new QuestionsService();
-    }
-    return QuestionsService.instance;
-  }
+  constructor() {}
 
   async create(data: any) {
     const question = new QuestionModel(data);

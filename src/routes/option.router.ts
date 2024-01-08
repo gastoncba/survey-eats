@@ -5,7 +5,7 @@ import { validatorHandler } from "../middleware/validator.handler";
 import { createOptionSchema, getOptionSchema, updateOptionSchema, getAllOptionSchema } from "../schemas/option.schema";
 
 export const router = express.Router();
-const optionService = OptionService.getInstance();
+const optionService = new OptionService();
 
 router.get("/brand/:brandId", validatorHandler(getAllOptionSchema, "params"), async (req: Request, res: Response, next: NextFunction) => {
   const { brandId } = req.params;

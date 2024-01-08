@@ -4,16 +4,7 @@ import GiftModel from "../models/gift.model";
 import QuestionnaireModel from "../models/questionnaire.model";
 
 export class GiftService {
-  private static instance: GiftService;
-
-  private constructor() {}
-
-  public static getInstance(): GiftService {
-    if (!GiftService.instance) {
-      GiftService.instance = new GiftService();
-    }
-    return GiftService.instance;
-  }
+  constructor() {}
 
   async find(questionnaireId: string) {
     const questionnaire = await QuestionnaireModel.findById(questionnaireId);

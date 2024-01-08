@@ -6,20 +6,11 @@ import { UserService } from "./user.service";
 import { EmailService } from "./email.service";
 import { config } from "../config/config";
 
-const userService = UserService.getInstance();
-const emailService = EmailService.getInstance();
+const userService = new UserService();
+const emailService = new EmailService();
 
 export class AuthService {
-  private static instance: AuthService;
-
-  private constructor() {}
-
-  public static getInstance(): AuthService {
-    if (!AuthService.instance) {
-      AuthService.instance = new AuthService();
-    }
-    return AuthService.instance;
-  }
+  constructor() {}
 
   async getUser(email: string, password: string) {
     const user = await userService.findByEmail(email);

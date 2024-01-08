@@ -5,7 +5,7 @@ import { validatorHandler } from "../middleware/validator.handler";
 import { createQuestionChainSchema, getAllQuestionChainSchema, getQuestionChainSchema, updateQuestionChainSchema } from "../schemas/questionChain.schema";
 
 export const router = express.Router();
-const questionChainService = QuestionChainService.getInstance();
+const questionChainService = new QuestionChainService();
 
 router.get("/questionnaire/:questionnaireId", validatorHandler(getAllQuestionChainSchema, "params"), async (req: Request, res: Response, next: NextFunction) => {
   const { questionnaireId } = req.params;

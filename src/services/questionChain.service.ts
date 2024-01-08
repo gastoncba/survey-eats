@@ -4,16 +4,7 @@ import QuestionChainModel from "../models/questionChain.model";
 import QuestionnaireModel from "../models/questionnaire.model";
 
 export class QuestionChainService {
-  private static instance: QuestionChainService;
-
-  private constructor() {}
-
-  public static getInstance(): QuestionChainService {
-    if (!QuestionChainService.instance) {
-      QuestionChainService.instance = new QuestionChainService();
-    }
-    return QuestionChainService.instance;
-  }
+  constructor() {}
 
   async create(data: any, questionnaireId: string) {
     const questionnaire = await QuestionnaireModel.findById(questionnaireId);

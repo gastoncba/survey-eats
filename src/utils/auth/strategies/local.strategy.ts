@@ -2,7 +2,7 @@ import { Strategy } from "passport-local";
 
 import { AuthService } from "../../../services/auth.service";
 
-const authService = AuthService.getInstance();
+const authService = new AuthService();
 
 export const localStrategy = new Strategy({ usernameField: "email" }, async (email: string, password: string, done) => {
   try {

@@ -7,19 +7,10 @@ import QuestionModel from "../models/question.model";
 import QuestionnaireModel from "../models/questionnaire.model";
 import { DinersServices } from "./diner.service";
 
-const dinersServices = DinersServices.getInstance();
+const dinersServices = new DinersServices();
 
 export class StatisticService {
-  private static instance: StatisticService;
-
-  private constructor() {}
-
-  public static getInstance(): StatisticService {
-    if (!StatisticService.instance) {
-      StatisticService.instance = new StatisticService();
-    }
-    return StatisticService.instance;
-  }
+  constructor() {}
 
   incluideOption(optionId: string, options: any[]) {
     for (const opt of options) {

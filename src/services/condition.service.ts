@@ -3,16 +3,7 @@ import * as boom from "@hapi/boom";
 import ConditionModel from "../models/condition.model";
 
 export class ConditionService {
-  private static instance: ConditionService;
-
-  private constructor() {}
-
-  public static getInstance(): ConditionService {
-    if (!ConditionService.instance) {
-      ConditionService.instance = new ConditionService();
-    }
-    return ConditionService.instance;
-  }
+  constructor() {}
 
   async create(data: any) {
     const condition = new ConditionModel(data);

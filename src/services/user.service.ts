@@ -4,19 +4,10 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/user.model";
 import { BrandsService } from "./brand.service";
 
-const brandService = BrandsService.getInstance();
+const brandService = new BrandsService();
 
 export class UserService {
-  private static instance: UserService;
-
-  private constructor() {}
-
-  public static getInstance(): UserService {
-    if (!UserService.instance) {
-      UserService.instance = new UserService();
-    }
-    return UserService.instance;
-  }
+  constructor() {}
 
   async create(data: any) {
     const foundUser = await this.findByEmail(data.email);

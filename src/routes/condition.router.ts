@@ -5,7 +5,7 @@ import { ConditionService } from "../services/condition.service";
 import { createConditionSchema, getAllConditionSchema, getConditionSchema, updateConditionSchema } from "../schemas/condition.schema";
 
 export const router = express.Router();
-const conditionService = ConditionService.getInstance();
+const conditionService = new ConditionService();
 
 router.get("/brand/:brandId", validatorHandler(getAllConditionSchema, "params"), async (req: Request, res: Response, next: NextFunction) => {
   const { brandId } = req.params;

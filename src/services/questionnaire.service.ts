@@ -9,21 +9,12 @@ import { GiftService } from "./gift.service";
 import { EmailService } from "./email.service";
 import { StatisticService, AnsweredQuestionnaire } from "./statistic.service";
 
-const giftService = GiftService.getInstance();
-const emailService = EmailService.getInstance();
-const statisticService = StatisticService.getInstance();
+const giftService = new GiftService();
+const emailService = new EmailService();
+const statisticService = new StatisticService();
 
 export class QuestionnaireService {
-  private static instance: QuestionnaireService;
-
-  private constructor() {}
-
-  public static getInstance(): QuestionnaireService {
-    if (!QuestionnaireService.instance) {
-      QuestionnaireService.instance = new QuestionnaireService();
-    }
-    return QuestionnaireService.instance;
-  }
+  constructor() {}
 
   async create(data: any, brandId: string) {
     const questionnaire = new QuestionnaireModel(data);

@@ -6,7 +6,7 @@ import { createUserSchema, updateUserSchema } from "../schemas/user.schema";
 import { validatorHandler } from "../middleware/validator.handler";
 
 export const router = express.Router();
-const userService = UserService.getInstance();
+const userService = new UserService();
 
 router.post("/create", validatorHandler(createUserSchema, "body"), async (req: Request, res: Response, next: NextFunction) => {
   try {

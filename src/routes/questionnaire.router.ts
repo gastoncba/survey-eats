@@ -6,7 +6,7 @@ import { validatorHandler } from "../middleware/validator.handler";
 import { createQuestionnaireSchema, getAllQuestionnaireSchema, getQuestionnaireSchema, updateQuestionnaireSchema, createStatisticsSchema, queryQuestionnaireIdSchema, sendGiftSchema } from "../schemas/questionnaire.schema";
 
 export const router = express.Router();
-const questionnaireService = QuestionnaireService.getInstance();
+const questionnaireService = new QuestionnaireService();
 
 router.get("/brand/:brandId", passport.authenticate("jwt", { session: false }), validatorHandler(getAllQuestionnaireSchema, "params"), async (req: Request, res: Response, next: NextFunction) => {
   const { brandId } = req.params;

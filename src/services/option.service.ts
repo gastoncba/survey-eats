@@ -4,16 +4,7 @@ import { OptionModel } from "../models/option.model";
 import QuestionChainModel from "../models/questionChain.model";
 
 export class OptionService {
-  private static instance: OptionService;
-
-  private constructor() {}
-
-  public static getInstance(): OptionService {
-    if (!OptionService.instance) {
-      OptionService.instance = new OptionService();
-    }
-    return OptionService.instance;
-  }
+  constructor() {}
 
   async create(data: any) {
     const option = new OptionModel(data);
