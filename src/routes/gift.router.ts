@@ -22,10 +22,7 @@ router.post("", validatorHandler(createGiftSchema, "body"), async (req: Request,
     const { body } = req;
     const { questionnaireId, ...data } = body;
     const gift = await giftService.create(data, questionnaireId);
-    res.json({
-      message: `Create`,
-      data: gift,
-    });
+    res.json(gift);
   } catch (error) {
     next(error);
   }
@@ -35,11 +32,8 @@ router.put("/:id", validatorHandler(getGiftSchema, "params"), validatorHandler(u
   try {
     const { id } = req.params;
     const { body } = req;
-    const updateGift = await giftService.update(body, id);
-    res.json({
-      message: `Update`,
-      data: updateGift,
-    });
+    const updatedGift = await giftService.update(body, id);
+    res.json(updatedGift);
   } catch (error) {
     next(error);
   }

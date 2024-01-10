@@ -32,10 +32,7 @@ router.post("/", validatorHandler(createOptionSchema, "body"), async (req: Reque
   const { body } = req;
   try {
     const option = await optionService.create(body);
-    res.status(201).json({
-      message: `Create`,
-      data: option,
-    });
+    res.status(201).json(option);
   } catch (error) {
     next(error);
   }
@@ -47,10 +44,7 @@ router.put("/:id", validatorHandler(getOptionSchema, "params"), validatorHandler
 
   try {
     const option = await optionService.update(body, id);
-    res.json({
-      message: `update`,
-      data: option,
-    });
+    res.json(option);
   } catch (error) {
     next(error);
   }

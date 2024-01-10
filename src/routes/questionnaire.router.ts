@@ -55,10 +55,7 @@ router.post("/", passport.authenticate("jwt", { session: false }), validatorHand
     const { body } = req;
     const { brandId, ...data } = body;
     const questionnaire = await questionnaireService.create(data, brandId);
-    res.status(201).json({
-      message: `Create`,
-      data: questionnaire,
-    });
+    res.status(201).json(questionnaire);
   } catch (error) {
     next(error);
   }
@@ -70,10 +67,7 @@ router.put("/:id", passport.authenticate("jwt", { session: false }), validatorHa
 
   try {
     const questionnaire = await questionnaireService.update(body, id);
-    res.json({
-      message: `update`,
-      data: questionnaire,
-    });
+    res.json(questionnaire);
   } catch (error) {
     next(error);
   }

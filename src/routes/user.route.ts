@@ -12,10 +12,7 @@ router.post("/create", validatorHandler(createUserSchema, "body"), async (req: R
   try {
     const { body } = req;
     const user = await userService.create(body);
-    res.status(201).json({
-      message: `Create`,
-      data: user,
-    });
+    res.status(201).json(user);
   } catch (error) {
     next(error);
   }
@@ -38,10 +35,7 @@ router.put("/update", passport.authenticate("jwt", { session: false }), validato
     const userId = payload.sub;
     const { brandId, ...changes } = req.body;
     const updatedUser = await userService.updateAll(userId, brandId, changes);
-    res.json({
-      message: "updated",
-      data: updatedUser,
-    });
+    res.json(updatedUser);
   } catch (error) {
     next(error);
   }

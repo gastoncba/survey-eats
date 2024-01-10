@@ -32,10 +32,7 @@ router.post("/", validatorHandler(createConditionSchema, "body"), async (req: Re
   const { body } = req;
   try {
     const condition = await conditionService.create(body);
-    res.status(201).json({
-      message: `Create`,
-      data: condition,
-    });
+    res.status(201).json(condition);
   } catch (error) {
     next(error);
   }
@@ -46,11 +43,8 @@ router.put("/:id", validatorHandler(getConditionSchema, "params"), validatorHand
   const { id } = req.params;
 
   try {
-    const condition = await conditionService.update(body, id);
-    res.json({
-      message: `update`,
-      data: condition,
-    });
+    const updatedCondition = await conditionService.update(body, id);
+    res.json(updatedCondition);
   } catch (error) {
     next(error);
   }

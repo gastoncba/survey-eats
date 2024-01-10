@@ -32,10 +32,7 @@ router.post("/", validatorHandler(createQuestionChainSchema, "body"), async (req
     const { body } = req;
     const { questionnaireId, ...data } = body;
     const qChain = await questionChainService.create(data, questionnaireId);
-    res.status(201).json({
-      message: `Create`,
-      data: qChain,
-    });
+    res.status(201).json(qChain);
   } catch (error) {
     next(error);
   }
@@ -47,10 +44,7 @@ router.put("/:id", validatorHandler(getQuestionChainSchema, "params"), validator
 
   try {
     const qChain = await questionChainService.update(body, id);
-    res.json({
-      message: `update`,
-      data: qChain,
-    });
+    res.json(qChain);
   } catch (error) {
     next(error);
   }

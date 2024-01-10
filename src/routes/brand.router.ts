@@ -32,10 +32,7 @@ router.post("/", validatorHandler(createBrandSchema, "body"), async (req: Reques
     const payload: any = req.user;
     const userId = payload.sub;
     const brand = await brandService.create(body, userId);
-    res.status(201).json({
-      message: `Create`,
-      data: brand,
-    });
+    res.status(201).json(brand);
   } catch (error) {
     next(error);
   }
@@ -47,10 +44,7 @@ router.put("/:id", validatorHandler(getBrandSchema, "params"), validatorHandler(
 
   try {
     const brand = await brandService.update(id, body);
-    res.json({
-      message: `update`,
-      data: brand,
-    });
+    res.json(brand);
   } catch (error) {
     next(error);
   }

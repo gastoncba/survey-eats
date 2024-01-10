@@ -32,10 +32,7 @@ router.post("/", validatorHandler(createQuestionSchema, "body"), async (req: Req
   const { body } = req;
   try {
     const question = await questionService.create(body);
-    res.status(201).json({
-      message: `Create`,
-      data: question,
-    });
+    res.status(201).json(question);
   } catch (error) {
     next(error);
   }
@@ -47,10 +44,7 @@ router.put("/:id", validatorHandler(getQuestionSchema, "params"), validatorHandl
 
   try {
     const question = await questionService.update(body, id);
-    res.json({
-      message: `update`,
-      data: question,
-    });
+    res.json(question);
   } catch (error) {
     next(error);
   }
