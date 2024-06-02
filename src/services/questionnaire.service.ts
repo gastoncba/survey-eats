@@ -8,6 +8,7 @@ import GiftModel from "../models/gift.model";
 import { GiftService } from "./gift.service";
 import { EmailService } from "./email.service";
 import { StatisticService, AnsweredQuestionnaire } from "./statistic.service";
+import StatisticModel from "../models/statistics.model";
 
 const giftService = new GiftService();
 const emailService = new EmailService();
@@ -49,7 +50,8 @@ export class QuestionnaireService {
         path: "questionChains",
         populate: [{ path: "question" }, { path: "positiveOptions" }, { path: "negativeOptions" }, { path: "conditions" }],
       })
-      .populate("gifts").exec();
+      .populate("gifts")
+      .exec();
     if (!questionnaire) {
       throw boom.notFound(`questionnaire #${id} not found`);
     }
@@ -83,8 +85,12 @@ export class QuestionnaireService {
     await QuestionChainModel.deleteMany({ _id: { $in: questionChainIds } });
     await GiftModel.deleteMany({ _id: { $in: questionGifts } });
 
-    /*Eliminamos question statistic de ese cuestionario*/
-    await QuestionStatisticModel.deleteOne({ questionnaireId: foundQuestionnaire._id });
+    /*Eliminamos la question statistic de ese cuestionario*/
+    const questionStatistics = await QuestionStatisticModel.findOne({ questionnaireId: foundQuestionnaire._id });
+    if (questionStatistics) {
+      StatisticModel.updateOne({ brandId: brand._id }, { $pull: { questionStatistics: questionStatistics._id } });
+      await QuestionStatisticModel.deleteOne({ questionnaireId: foundQuestionnaire._id });
+    }
   }
 
   async getAnyQuestionnaire(brandId: string, questionnaireId?: string) {
@@ -113,7 +119,7 @@ export class QuestionnaireService {
 
   async sendGifts(giftsId: string[], email: string, brandId: string) {
     const gifts = await giftService.findGifts(giftsId);
-    await statisticService.calculateRepurchases(email, brandId); 
+    await statisticService.calculateRepurchases(email, brandId);
 
     let html = `
         <div style="font-family: 'Arial', sans-serif; color: #333; padding: 20px;">

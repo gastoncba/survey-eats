@@ -25,11 +25,11 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    return await UserModel.findOne({ email }).populate("brand");
+    return await UserModel.findOne({ email }).populate("brand").exec();
   }
 
   async findById(userId: string) {
-    const user = await UserModel.findById(userId).populate("brand");
+    const user = await UserModel.findById(userId).populate("brand").exec();
 
     if (!user) {
       throw boom.notFound(`user #${userId} not found`);
@@ -41,7 +41,7 @@ export class UserService {
   }
 
   async findUserComplete(userId: string) {
-    const user = await UserModel.findById(userId).populate("brand");
+    const user = await UserModel.findById(userId).populate("brand").exec();
 
     if (!user) {
       throw boom.notFound(`user #${userId} not found`);

@@ -19,8 +19,8 @@ router.post("/login", validatorHandler(loginSchema, "body"), passport.authentica
 
 router.post("/recovery", validatorHandler(recoverySchema, "body"), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email } = req.body;
-    const rta = await authService.sendRecovery(email);
+    const { email, url } = req.body;
+    const rta = await authService.sendRecovery(email, url);
     res.json(rta);
   } catch (error) {
     next(error);

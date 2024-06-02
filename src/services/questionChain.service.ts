@@ -32,7 +32,8 @@ export class QuestionChainService {
       .populate("question")
       .populate("positiveOptions")
       .populate("negativeOptions")
-      .populate("conditions");
+      .populate("conditions")
+      .exec();
   }
 
   async findOne(id: string) {

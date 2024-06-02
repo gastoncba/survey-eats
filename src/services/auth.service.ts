@@ -40,7 +40,7 @@ export class AuthService {
     };
   }
 
-  async sendRecovery(email: string) {
+  async sendRecovery(email: string, url: string) {
     const user = await userService.findByEmail(email);
     if (!user) {
       throw boom.unauthorized();
@@ -49,7 +49,7 @@ export class AuthService {
     const { jwtSecret } = config;
     const payload = { sub: user._id };
     const token = jwt.sign(payload, jwtSecret, { expiresIn: "15m" });
-    const link = `http://localhost:3000/recovery?token=${token}`;
+    const link = `${url}?token=${token}`;
 
     await userService.update(user.id, { recoveryToken: token });
 
