@@ -49,7 +49,7 @@ export class QuestionnaireService {
         path: "questionChains",
         populate: [{ path: "question" }, { path: "positiveOptions" }, { path: "negativeOptions" }, { path: "conditions" }],
       })
-      .populate("gifts");
+      .populate("gifts").exec();
     if (!questionnaire) {
       throw boom.notFound(`questionnaire #${id} not found`);
     }
