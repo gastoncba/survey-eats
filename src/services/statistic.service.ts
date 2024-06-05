@@ -161,16 +161,28 @@ export class StatisticService {
     await this.createQuestionStatistics(answeredQuestionnaire);
 
     /** Encontramos la instancia de questionStatistic por questionnaireId */
-    const qStatistics = await QuestionStatisticModel.find({ questionnaireId });
-    let idQuestionStatistics = qStatistics.map((qs) => qs._id);
+    const foundedQuestionStatistic = await QuestionStatisticModel.findOne({ questionnaireId });
 
     const statistics = await StatisticModel.findOne({ brandId });
     if (!statistics) {
-      const newStatistic = new StatisticModel({ brandId, answeredQuestionnaires: 1, questionStatistics: idQuestionStatistics });
+      const newStatistic = new StatisticModel({ brandId, answeredQuestionnaires: 1, questionStatistics: [foundedQuestionStatistic?.id] });
       await newStatistic.save();
     } else {
       statistics.answeredQuestionnaires++;
-      statistics.questionStatistics = idQuestionStatistics;
+
+      const index = statistics.questionStatistics.findIndex(
+        //@ts-ignore
+        (element) => element._id.equals(foundedQuestionStatistic?._id)
+      );
+
+      if (index !== -1) {
+        //@ts-ignore
+        statistics.questionStatistics[index] = foundedQuestionStatistic;
+      } else {
+        //@ts-ignore
+        statistics.questionStatistics.push(foundedQuestionStatistic);
+      }
+
       await statistics.save();
     }
   }
@@ -182,7 +194,7 @@ export class StatisticService {
     questionStatistics.forEach((statistics) => {
       if (statistics.options && statistics.options.length > 0) {
         statistics.options.forEach((option: any) => {
-          if (option.totalStars !== null) {
+          if (option.totalStars !== -1) {
             totalStarsSum += option.totalStars;
             statisticsWithStarsCount += 1;
           }
